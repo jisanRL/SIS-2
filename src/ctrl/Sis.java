@@ -28,6 +28,7 @@ public class Sis extends HttpServlet {
 	private SIS sisModel;
 	private StudentDAO sd;
 	private EnrollmentDAO ed;
+	private String errorMessage = "";
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -63,42 +64,71 @@ public class Sis extends HttpServlet {
 		
 		// check if u clicked on Report
 		String reportButton = request.getParameter("report");		// button clicked
-
-		if (reportButton != null) {
+		String xmlButton = request.getParameter("xml");				// xml button
+		
+		if (reportButton != null || xmlButton != null) {
 
 			String prefix = request.getParameter("prefix");
 			String creditTaken = request.getParameter("creditTaken");
 			
+			
+			// do changes from this line onwards, now make the listwrapper calss and the export method in model
 			if (!emptyNullChecker(prefix) && !emptyNullChecker(creditTaken)) {
 				try {
 					// calls sisModel and gets the student
 					sisModel = (SIS) getServletContext().getAttribute("sis");
-					tr = sisModel.retrieveStudent(prefix, creditTaken);
 					
-					// go through the hashmap and retrieve data in the set for the StudentBean
-					for (String studentBean : tr.keySet()) {
-						res.add(tr.get(studentBean));
+					if (reportButton != null) {		// if report button is pressed 
+						tr = sisModel.retrieveStudent(prefix, creditTaken);
+						
+						// go through the hashmap and retrieve data in the set for the StudentBean
+						for (String studentBean : tr.keySet()) {
+							res.add(tr.get(studentBean));
+						}
+						numberOfResults = tr.size();							// number of outputs 
+						request.setAttribute("numberOfResults", numberOfResults);
+						
+						// output as an array in form
+						request.setAttribute("resultMap", res.toArray());
+						request.getRequestDispatcher("/form.jspx").forward(request, response);
+						
+					} else if(xmlButton != null) {	// if generate xml button is pressed 
+						
+						String exp = "export/" +request.getSession().getId() + ".xml";			// create the xml file
+						String fName = this.getServletContext().getRealPath("/"+exp);
+						System.out.println("fName = " + fName);
+						sisModel.export(prefix, creditTaken, fName);							// exports the data
+						
+						if (sisModel.getLWSize() == 0) {
+							setErrorMsg("XML can;t be generated with 0 entries, Please try again");
+							ep = 3;
+							request.setAttribute("errVal",ep);
+							String errMessage = errorMessage;
+							request.setAttribute("errXML", errMessage);
+							request.getRequestDispatcher("/form.jspx").forward(request, response);
+						} else {
+							request.setAttribute("link", exp);
+							request.setAttribute("anchor", fName);
+							request.getRequestDispatcher("/XMLRes.jspx").forward(request, response);
+						}
 					}
-					
-					numberOfResults = tr.size();							// number of outputs 
-					request.setAttribute("numberOfResults", numberOfResults);
-					
-					// output as an array in form
-					request.setAttribute("resultMap", res.toArray());
-
 				} catch (Exception e) { 
 					ep = 1;
 					request.setAttribute("errorValue", ep);
+//					String errorMessage = e.getMessage(); 
+//					request.setAttribute("errMsg", errorMessage);
+//					request.getRequestDispatcher(form).forward(request, response);					
 				}
-			} else { // if fields are empty
+			} else if (prefix.isEmpty() || creditTaken.isEmpty()) { // if fields are empty
 				ep = 1;
 				request.setAttribute("errorValue", ep);
+				request.getRequestDispatcher("/form.jspx").forward(request, response);
 			}
 			System.out.println("name = " +  prefix);
 			System.out.println("resultmap=" + res);
+		} else {
+			request.getRequestDispatcher("/form.jspx").forward(request, response);
 		}
-		
-	request.getRequestDispatcher("/form.jspx").forward(request, response);
 	}
 
 	/**
@@ -115,6 +145,10 @@ public class Sis extends HttpServlet {
 			return true;
 		}
 		return false;
+	}
+	
+	private void setErrorMsg(String s) {
+		this.errorMessage = s;
 	}
 
 }

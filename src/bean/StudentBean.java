@@ -1,4 +1,5 @@
 package bean;
+import javax.xml.bind.annotation.*;
 
 /*
  * this class is a simple data strucutre 
@@ -11,6 +12,8 @@ package bean;
  * 	credit_graduate eg 90
  * 
  */
+
+@XmlType(propOrder={"sid","name", "credt_taken", "credit_grad"})
 public class StudentBean {
 
 	private String sid;

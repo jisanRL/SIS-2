@@ -33,9 +33,15 @@
 				</tr>
 				<tr>
 					<td>
-						<button action='submit' name='report' label='report' value="true">Report</button><br />
+						<button action='submit' name='report' label='report' value="true">Report</button><br /><BR />
 					</td>
 				</tr>
+				<tr>
+					<td>
+							<button action="submit"  name='xml' label='xml' value="true">Generate XML</button>
+					</td>
+				</tr>
+			
 				<br />
 				<tr>
 					<td><c:choose>
