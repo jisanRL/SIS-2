@@ -65,7 +65,8 @@ public class Sis extends HttpServlet {
 		// check if u clicked on Report
 		String reportButton = request.getParameter("report");		// button clicked
 		String xmlButton = request.getParameter("xml");				// xml button
-		
+		String regExp = "^[^<>{}\"/|;:.,~!?@#$%^=&*\\]\\\\()\\[¿§«»ω⊙¤°℃℉€¥£¢¡®©0-9_+]*$";
+
 		if (reportButton != null || xmlButton != null) {
 
 			String prefix = request.getParameter("prefix");
@@ -120,7 +121,7 @@ public class Sis extends HttpServlet {
 //					String errorMessage = e.getMessage(); 
 //					request.setAttribute("errMsg", errorMessage);
 //					request.getRequestDispatcher("/form.jspx").forward(request, response);					
-				}
+				} 
 			} else if (prefix.isEmpty() || creditTaken.isEmpty()) { // if fields are empty
 				ep = 1;
 				request.setAttribute("errorValue", ep);

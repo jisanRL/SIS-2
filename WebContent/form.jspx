@@ -38,14 +38,14 @@
 				</tr>
 				<tr>
 					<td>
-							<button action="submit"  name='xml' label='xml' value="true">Generate XML</button>
+						<button action="submit"  name='xml' label='xml' value="true">Generate XML</button>
 					</td>
 				</tr>
 			
 				<br />
 				<tr>
-					<td><c:choose>
-					
+					<td>
+					<c:choose>
 							<c:when test="${requestScope['errorValue'] eq 1}">
 								<span><font color="red">There was an internal
 										error or the result is empty!</font></span>
@@ -54,28 +54,30 @@
 								<c:choose>
 									<c:when test="${requestScope['numberOfResults'] gt -1}">
 								There are ${requestScope['numberOfResults']} entries.<br />
-										<TABLE>
+										<TABLE border="1" cellpadding="5">
 											<TR>
-												<TH>Id |</TH>
-												<TH>Name |</TH>
-												<TH>Credit Taken |</TH>
+												<TH>Id</TH>
+												<TH>Name</TH>
+												<TH>Credit Taken</TH>
 												<TH>Credits to graduate</TH>
 											</TR>
-										</TABLE>
-										<c:forEach items="${requestScope['resultMap']}" var="key">
+											
+											<c:forEach items="${requestScope['resultMap']}" var="key">
 											<TR>
-												<TD><c:out value="${key.sid}" />|</TD>
-												<TD><c:out value="${key.name}" />|</TD>
-												<TD><c:out value="${key.credit_taken}" />|</TD>
-												<TD><c:out value="${key.credit_grad}" /></TD>
+												<TD><c:out value="${key.sid}" /></TD>
+												<TD><c:out value="${key.name}" /></TD>
+												<TD><c:out value="${key.credit_taken}"/></TD>
+												<TD><c:out value="${key.credit_grad}"/></TD>
 											</TR>
 										</c:forEach>
+										</TABLE>
 									</c:when>
 									<c:otherwise>
 									</c:otherwise>
 								</c:choose>
 							</c:otherwise>
-						</c:choose></td>
+						</c:choose>
+					</td>
 				</tr>
 			</table>
 		</fieldset>
