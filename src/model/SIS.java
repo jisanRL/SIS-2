@@ -109,7 +109,7 @@ public class SIS {
 		String path = new File(filename).getParent();		 // relative path 
 		
 		SchemaFactory s = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);	// Factory that creates Schema objects
-		Schema sc = s.newSchema(new File(path+"/SIS.xsd"));
+		Schema sc = s.newSchema(new File(path+"/SIS.xsd"));	// creates the file in the destination of the path
 		marshaller.setSchema(sc);
 		
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
@@ -120,7 +120,7 @@ public class SIS {
 		
 		marshaller.marshal(lw, new StreamResult(sw));
 		System.out.println(sw.toString()); // for debugging
-		
+		System.out.println(sc);
 //		FileWriter fc = new FileWriter(filename);
 //		fc.write(sw.toString());
 //		fc.close();

@@ -19,7 +19,7 @@ public class ListWrapper {
 
 	//ctr
 	public ListWrapper() {
-		super();
+//		super();
 		
 	}
 	

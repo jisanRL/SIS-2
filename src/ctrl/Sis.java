@@ -95,29 +95,31 @@ public class Sis extends HttpServlet {
 					} else if(xmlButton != null) {	// if generate xml button is pressed 
 						
 						String exp = "export/" +request.getSession().getId() + ".xml";			// create the xml file
-						String fName = this.getServletContext().getRealPath("/"+exp);
+						String fName = this.getServletContext().getRealPath("/"+ exp);			// path to export folder
+						
 						System.out.println("fName = " + fName);
 						sisModel.export(prefix, creditTaken, fName);							// exports the data
 						
 						if (sisModel.getLWSize() == 0) {
-							setErrorMsg("XML can;t be generated with 0 entries, Please try again");
-							ep = 3;
-							request.setAttribute("errVal",ep);
-							String errMessage = errorMessage;
-							request.setAttribute("errXML", errMessage);
-							request.getRequestDispatcher("/form.jspx").forward(request, response);
-						} else {
-							request.setAttribute("link", exp);
-							request.setAttribute("anchor", fName);
-							request.getRequestDispatcher("/XMLRes.jspx").forward(request, response);
+								setErrorMsg("XML can;t be generated with 0 entries, Please try again");
+								ep = 3;
+								request.setAttribute("errVal",ep);
+								String errMessage = errorMessage;
+								request.setAttribute("errXML", errMessage);
+								request.getRequestDispatcher("/form.jspx").forward(request, response);
+							} else {
+								request.setAttribute("link", exp);
+								request.setAttribute("anchor", fName);
+								
+								request.getRequestDispatcher("/XMLRes.jspx").forward(request, response);
+							}
 						}
-					}
-				} catch (Exception e) { 
+					} catch (Exception e) { 
 					ep = 1;
 					request.setAttribute("errorValue", ep);
 //					String errorMessage = e.getMessage(); 
 //					request.setAttribute("errMsg", errorMessage);
-//					request.getRequestDispatcher(form).forward(request, response);					
+//					request.getRequestDispatcher("/form.jspx").forward(request, response);					
 				}
 			} else if (prefix.isEmpty() || creditTaken.isEmpty()) { // if fields are empty
 				ep = 1;
