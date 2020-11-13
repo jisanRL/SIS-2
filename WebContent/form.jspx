@@ -11,9 +11,11 @@
 	<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>Student Information System</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/res/form.css" type="text/css" />
+<script type="text/javascript" src="${pageContext.request.contextPath}/res/form.js">;</script>
 </head>
 <body>
-	<form action="sis" method="GET">
+	<form action="sis" method="POST">
 		<fieldset>
 			<legend>
 				<label for="legend">Student Information System </label>
@@ -39,6 +41,9 @@
 				<tr>
 					<td>
 						<button action="submit"  name='xml' label='xml' value="true">Generate XML</button>
+					</td>
+					<td>
+						<button action="submit"  name='json' label='json' value="true">Generate JSON</button>
 					</td>
 				</tr>
 			

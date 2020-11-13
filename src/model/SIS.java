@@ -1,6 +1,7 @@
 package model;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
@@ -22,7 +23,10 @@ import javax.sql.DataSource;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
@@ -91,9 +95,8 @@ public class SIS {
 	
 	// method returns a String that contains the XML elements as described below.
 	// check the fileName in the signature
-	public String export(String namePrefix, String creditTaken, String filename) throws Exception {
+	public String export(String namePrefix, String creditTaken) throws Exception {
 		checkInput( namePrefix, creditTaken);			// check this 
-		
 		
 		Map<String, StudentBean> sb = this.students.retrieve(namePrefix, Integer.parseInt(creditTaken));   // map for studentbean to get the students 
 		List<StudentBean> stdList = new ArrayList<StudentBean>(sb.values());						 	   // arraylist for studentbean
@@ -103,35 +106,37 @@ public class SIS {
 		lw.setList(stdList);
 		
 		JAXBContext jc = JAXBContext.newInstance(lw.getClass());
+		
 		Marshaller marshaller = jc.createMarshaller(); 
-		
-	
-		String path = new File(filename).getParent();		 // relative path 
-		
-		SchemaFactory s = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);	// Factory that creates Schema objects
-		Schema sc = s.newSchema(new File(path+"/SIS.xsd"));	// creates the file in the destination of the path
-		marshaller.setSchema(sc);
-		
-		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE); 
 		marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+		
+		SchemaFactory s = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);				// Factory that creates Schema objects
+		Source sf = new StreamSource(getClass().getClassLoader().getResourceAsStream("/SIS.xsd"));		// get the schema 
+		Schema schema = s.newSchema(sf);
+		marshaller.setSchema(schema);
 		
 		StringWriter sw = new StringWriter();
 		sw.write("\n");
 		
+		
 		marshaller.marshal(lw, new StreamResult(sw));
+		marshaller.marshal(lw, new FileOutputStream("sis.xml"));
 		System.out.println(sw.toString()); // for debugging
-		System.out.println(sc);
-//		FileWriter fc = new FileWriter(filename);
-//		fc.write(sw.toString());
-//		fc.close();
 		
 		//return XML
 		return sw.toString();
-	
 	}
 	
 	public int getLWSize() {
 		return lw.getListSize();
+	}
+	
+	// JSON exporter
+	public void exportJSON(String namePrefix, String creditTaken, String filename) throws Exception {
+//		JSONObject obj = new JSONObject();
+		
+		
 	}
 	
 	public static void main(String[] args) throws ClassNotFoundException {
